@@ -38,10 +38,34 @@ enum ParsePersonError {
 // 4. If the name is empty, return the error `ParsePersonError::NoName`.
 // 5. Parse the second element from the split operation into a `u8` as the age.
 // 6. If parsing the age fails, return the error `ParsePersonError::ParseInt`.
+
 impl FromStr for Person {
     type Err = ParsePersonError;
+    fn from_str(s: &str) -> Result<Person, Self::Err> {
+       if s == ""{return Err(Self::Err::BadLen)}
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {}
+       let get_s:Vec<&str> = s.split(",").collect();
+       println!("get_s len {}", get_s.len());
+       if get_s.len() == 2{
+        let name = get_s[0].to_string();
+        let str_age = get_s[1].to_string();
+        let age = get_s[1].parse::<i32>();
+        if name == ""{return Err(Self::Err::NoName)}
+        match age{
+            Ok(num) => {
+                let age = num as u8;
+                return Ok(Person{name, age})
+            }
+            Err(interr) =>{
+                Err(Self::Err::ParseInt(interr))
+            }
+
+        }
+        
+       }else {
+        Err(Self::Err::BadLen)
+       }
+    }
 }
 
 fn main() {
